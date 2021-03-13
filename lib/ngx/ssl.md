@@ -17,6 +17,7 @@ Table of Contents
     * [priv_key_pem_to_der](#priv_key_pem_to_der)
     * [set_der_priv_key](#set_der_priv_key)
     * [server_name](#server_name)
+    * [server_port](#server_port)
     * [raw_server_addr](#raw_server_addr)
     * [raw_client_addr](#raw_client_addr)
     * [get_tls1_version](#get_tls1_version)
@@ -25,6 +26,7 @@ Table of Contents
     * [parse_pem_priv_key](#parse_pem_priv_key)
     * [set_cert](#set_cert)
     * [set_priv_key](#set_priv_key)
+    * [verify_client](#verify_client)
 * [Community](#community)
     * [English Mailing List](#english-mailing-list)
     * [Chinese Mailing List](#chinese-mailing-list)
@@ -251,6 +253,21 @@ This function can be called in any context where downstream https is used.
 
 [Back to TOC](#table-of-contents)
 
+server_port
+-----------
+**syntax:** port, err = ssl.server_port()
+
+**context:** *any*
+
+Returns the server port. Returns `nil`
+when server dont have a port.
+
+In case of failures, it returns `nil` *and* a string describing the error.
+
+This function can be called in any context where downstream https is used.
+
+[Back to TOC](#table-of-contents)
+
 raw_server_addr
 ---------------
 **syntax:** *addr_data, addr_type, err = ssl.raw_server_addr()*
@@ -472,6 +489,31 @@ Note that this `set_priv_key` function will run slightly faster, in terms of CPU
 which do not require any additional conversion needed to be performed by the SSL library during the SSL handshake.
 
 This function was first added in version `0.1.7`.
+
+[Back to TOC](#table-of-contents)
+
+verify_client
+-------------
+**syntax:** *ok, err = ssl.verify_client(ca_certs?, depth?)*
+
+**context:** *ssl_certificate_by_lua&#42;*
+
+Requires a client certificate during TLS handshake.
+
+The `ca_certs` is the CA certificate chain opaque pointer returned by the
+[parse_pem_cert](#parse_pem_cert) function for the current SSL connection.
+The list of certificates will be sent to clients. Also, they will be added to trusted store.
+If omitted, will not send any CA certificate to clients.
+
+The `depth` is the verification depth in the client certificates chain.
+If omitted, will use the value specified by `ssl_verify_depth`.
+
+Returns `true` on success, or a `nil` value and a string describing the error otherwise.
+
+Note that TLS is not terminated when verification fails. You need to examine Nginx variable `$ssl_client_verify`
+later to determine next steps.
+
+This function was first added in version `0.1.20`.
 
 [Back to TOC](#table-of-contents)
 

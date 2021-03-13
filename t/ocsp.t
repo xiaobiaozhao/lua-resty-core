@@ -42,7 +42,8 @@ __DATA__
                 return
             end
 
-            local url, err = ocsp.get_ocsp_responder_from_der_chain(cert_data)
+            -- specify the max length explicitly here, since string buf size may be too short
+            local url, err = ocsp.get_ocsp_responder_from_der_chain(cert_data, 128)
             if not url then
                 ngx.log(ngx.ERR, "failed to get OCSP responder: ", err)
                 return
@@ -502,7 +503,8 @@ still get an error: truncated
                 return
             end
 
-            local req, err = ocsp.create_ocsp_request(cert_data)
+            -- specify the max length explicitly here, since string buf size may be too short
+            local req, err = ocsp.create_ocsp_request(cert_data, 128)
             if not req then
                 ngx.log(ngx.ERR, "failed to create OCSP request: ", err)
                 return
@@ -959,7 +961,8 @@ OCSP response validation ok
             local resp = f:read("*a")
             f:close()
 
-            local req, err = ocsp.validate_ocsp_response(resp, cert_data)
+            -- specify the max length explicitly here, since string buf size may be too short
+            local req, err = ocsp.validate_ocsp_response(resp, cert_data, 128)
             if not req then
                 ngx.log(ngx.ERR, "failed to validate OCSP response: ", err)
                 return
@@ -1239,7 +1242,8 @@ OCSP response validation ok
             local resp = f:read("*a")
             f:close()
 
-            local req, err = ocsp.validate_ocsp_response(resp, cert_data)
+            -- specify the max length explicitly here, since string buf size may be too short
+            local req, err = ocsp.validate_ocsp_response(resp, cert_data, 128)
             if not req then
                 ngx.log(ngx.ERR, "failed to validate OCSP response: ", err)
                 return
@@ -1331,7 +1335,8 @@ OCSP response validation ok
             local resp = f:read("*a")
             f:close()
 
-            local req, err = ocsp.validate_ocsp_response(resp, cert_data)
+            -- specify the max length explicitly here, since string buf size may be too short
+            local req, err = ocsp.validate_ocsp_response(resp, cert_data, 128)
             if not req then
                 ngx.log(ngx.ERR, "failed to validate OCSP response: ", err)
                 return ngx.exit(ngx.ERROR)
@@ -1403,7 +1408,7 @@ FIXME: check the OCSP staple actually received by the ssl client
     lua_package_path "$TEST_NGINX_LUA_PACKAGE_PATH";
 
     server {
-        listen 127.0.0.2:23456 ssl;
+        listen 127.0.0.2:$TEST_NGINX_RAND_PORT_1 ssl;
         server_name test.com;
         ssl_certificate_by_lua_block {
             local ssl = require "ngx.ssl"
@@ -1444,7 +1449,7 @@ FIXME: check the OCSP staple actually received by the ssl client
 
                 sock:settimeout(3000)
 
-                local ok, err = sock:connect("127.0.0.2", 23456)
+                local ok, err = sock:connect("127.0.0.2", $TEST_NGINX_RAND_PORT_1)
                 if not ok then
                     ngx.say("failed to connect: ", err)
                     return
@@ -1485,7 +1490,7 @@ ocsp status resp set ok: nil,
     lua_package_path "$TEST_NGINX_LUA_PACKAGE_PATH";
 
     server {
-        listen 127.0.0.2:23456 ssl;
+        listen 127.0.0.2:$TEST_NGINX_RAND_PORT_1 ssl;
         server_name test.com;
         ssl_certificate_by_lua_block {
             local ssl = require "ngx.ssl"
@@ -1526,7 +1531,7 @@ ocsp status resp set ok: nil,
 
                 sock:settimeout(3000)
 
-                local ok, err = sock:connect("127.0.0.2", 23456)
+                local ok, err = sock:connect("127.0.0.2", $TEST_NGINX_RAND_PORT_1)
                 if not ok then
                     ngx.say("failed to connect: ", err)
                     return

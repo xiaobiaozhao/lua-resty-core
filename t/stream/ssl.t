@@ -16,7 +16,6 @@ no_long_string();
 env_to_nginx("PATH=" . $ENV{'PATH'});
 $ENV{TEST_NGINX_LUA_PACKAGE_PATH} = "$t::TestCore::Stream::lua_package_path";
 $ENV{TEST_NGINX_HTML_DIR} ||= html_dir();
-$ENV{TEST_NGINX_SERVER_SSL_PORT} ||= 4433;
 
 run_tests();
 
@@ -427,7 +426,7 @@ qr/Using unix socket file .*?nginx\.sock/
     lua_package_path "$TEST_NGINX_LUA_PACKAGE_PATH";
 
     server {
-        listen 127.0.0.1:12345 ssl;
+        listen 127.0.0.1:$TEST_NGINX_RAND_PORT_1 ssl;
         ssl_certificate_by_lua_block {
             local ssl = require "ngx.ssl"
             local byte = string.byte
@@ -465,7 +464,7 @@ qr/Using unix socket file .*?nginx\.sock/
 
             sock:settimeout(3000)
 
-            local ok, err = sock:connect("127.0.0.1", 12345)
+            local ok, err = sock:connect("127.0.0.1", $TEST_NGINX_RAND_PORT_1)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -519,7 +518,7 @@ Using IPv4 address: 127.0.0.1
     lua_package_path "$TEST_NGINX_LUA_PACKAGE_PATH";
 
     server {
-        listen [::1]:12345 ssl;
+        listen [::1]:$TEST_NGINX_RAND_PORT_1 ssl;
         ssl_certificate_by_lua_block {
             local ssl = require "ngx.ssl"
             local byte = string.byte
@@ -557,7 +556,7 @@ Using IPv4 address: 127.0.0.1
 
             sock:settimeout(3000)
 
-            local ok, err = sock:connect("[::1]", 12345)
+            local ok, err = sock:connect("[::1]", $TEST_NGINX_RAND_PORT_1)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -806,7 +805,7 @@ lua ssl server name: "test.com"
     lua_package_path "$TEST_NGINX_LUA_PACKAGE_PATH";
 
     server {
-        listen 127.0.0.2:23456 ssl;
+        listen 127.0.0.2:$TEST_NGINX_RAND_PORT_1 ssl;
         ssl_certificate_by_lua_block {
             local ssl = require "ngx.ssl"
 
@@ -834,7 +833,7 @@ lua ssl server name: "test.com"
 
             sock:settimeout(3000)
 
-            local ok, err = sock:connect("127.0.0.2", 23456)
+            local ok, err = sock:connect("127.0.0.2", $TEST_NGINX_RAND_PORT_1)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -871,7 +870,7 @@ got TLS1 version: SSLv3,
     lua_package_path "$TEST_NGINX_LUA_PACKAGE_PATH";
 
     server {
-        listen 127.0.0.2:23456 ssl;
+        listen 127.0.0.2:$TEST_NGINX_RAND_PORT_1 ssl;
         ssl_certificate_by_lua_block {
             local ssl = require "ngx.ssl"
 
@@ -899,7 +898,7 @@ got TLS1 version: SSLv3,
 
             sock:settimeout(3000)
 
-            local ok, err = sock:connect("127.0.0.2", 23456)
+            local ok, err = sock:connect("127.0.0.2", $TEST_NGINX_RAND_PORT_1)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -936,7 +935,7 @@ got TLS1 version: TLSv1,
     lua_package_path "$TEST_NGINX_LUA_PACKAGE_PATH";
 
     server {
-        listen 127.0.0.2:23456 ssl;
+        listen 127.0.0.2:$TEST_NGINX_RAND_PORT_1 ssl;
         ssl_certificate_by_lua_block {
             local ssl = require "ngx.ssl"
 
@@ -964,7 +963,7 @@ got TLS1 version: TLSv1,
 
             sock:settimeout(3000)
 
-            local ok, err = sock:connect("127.0.0.2", 23456)
+            local ok, err = sock:connect("127.0.0.2", $TEST_NGINX_RAND_PORT_1)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -1001,7 +1000,7 @@ got TLS1 version: TLSv1.1,
     lua_package_path "$TEST_NGINX_LUA_PACKAGE_PATH";
 
     server {
-        listen 127.0.0.2:23456 ssl;
+        listen 127.0.0.2:$TEST_NGINX_RAND_PORT_1 ssl;
         ssl_certificate_by_lua_block {
             local ssl = require "ngx.ssl"
 
@@ -1029,7 +1028,7 @@ got TLS1 version: TLSv1.1,
 
             sock:settimeout(3000)
 
-            local ok, err = sock:connect("127.0.0.2", 23456)
+            local ok, err = sock:connect("127.0.0.2", $TEST_NGINX_RAND_PORT_1)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -1066,7 +1065,7 @@ got TLS1 version: TLSv1.2,
     lua_package_path "$TEST_NGINX_LUA_PACKAGE_PATH";
 
     server {
-        listen 127.0.0.2:23456 ssl;
+        listen 127.0.0.2:$TEST_NGINX_RAND_PORT_1 ssl;
         ssl_certificate_by_lua_block {
             local semaphore = require "ngx.semaphore"
 
@@ -1101,7 +1100,7 @@ got TLS1 version: TLSv1.2,
 
             sock:settimeout(3000)
 
-            local ok, err = sock:connect("127.0.0.2", 23456)
+            local ok, err = sock:connect("127.0.0.2", $TEST_NGINX_RAND_PORT_1)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -1667,7 +1666,7 @@ qr/\[error\] .*? failed to parse pem key: PEM_read_bio_PrivateKey\(\) failed/
     lua_package_path "$TEST_NGINX_LUA_PACKAGE_PATH";
 
     server {
-        listen 127.0.0.1:12345 ssl;
+        listen 127.0.0.1:$TEST_NGINX_RAND_PORT_1 ssl;
         ssl_certificate_by_lua_block {
             local ssl = require "ngx.ssl"
             local byte = string.byte
@@ -1690,7 +1689,7 @@ qr/\[error\] .*? failed to parse pem key: PEM_read_bio_PrivateKey\(\) failed/
 
             sock:settimeout(3000)
 
-            local ok, err = sock:connect("127.0.0.1", 12345)
+            local ok, err = sock:connect("127.0.0.1", $TEST_NGINX_RAND_PORT_1)
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -1744,7 +1743,7 @@ client ip: 127.0.0.1
     lua_shared_dict done 16k;
     lua_package_path "$TEST_NGINX_LUA_PACKAGE_PATH/?.lua;;";
     server {
-        listen $TEST_NGINX_SERVER_SSL_PORT ssl;
+        listen $TEST_NGINX_RAND_PORT_1 ssl;
         ssl_session_tickets off;
         ssl_certificate ../../cert/test2.crt;
         ssl_certificate_key ../../cert/test2.key;
@@ -1788,7 +1787,7 @@ client ip: 127.0.0.1
         ngx.shared.done:delete("handshake")
         local addr = ngx.var.addr;
         local req = "'GET / HTTP/1.0\r\nHost: test.com\r\nConnection: close\r\n\r\n'"
-        local f, err = io.popen("echo -n " .. req .. " | timeout 3s openssl s_client -connect 127.0.0.1:$TEST_NGINX_SERVER_SSL_PORT")
+        local f, err = io.popen("echo -n " .. req .. " | timeout 3s openssl s_client -connect 127.0.0.1:$TEST_NGINX_RAND_PORT_1")
         if not f then
             ngx.say(err)
             return
@@ -1883,6 +1882,153 @@ connected: 1
 ssl handshake: boolean
 --- error_log
 got TLS1 version: TLSv1.3,
+--- no_error_log
+[error]
+[alert]
+[emerg]
+
+
+
+=== TEST 23: verify client with CA certificates
+--- stream_config
+    server {
+        listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
+
+        ssl_certificate ../../cert/test2.crt;
+        ssl_certificate_key ../../cert/test2.key;
+
+        ssl_certificate_by_lua_block {
+            local ssl = require "ngx.ssl"
+
+            local f = assert(io.open("t/cert/test.crt", "rb"))
+            local cert_data = f:read("*all")
+            f:close()
+
+            local cert = ssl.parse_pem_cert(cert_data)
+            if not cert then
+                ngx.log(ngx.ERR, "failed to parse pem cert: ", err)
+                return
+            end
+
+            local ok, err = ssl.verify_client(cert, 1)
+            if not ok then
+                ngx.log(ngx.ERR, "failed to verify client: ", err)
+                return
+            end
+        }
+
+        content_by_lua_block {
+            print('client certificate subject: ', ngx.var.ssl_client_s_dn)
+            ngx.say(ngx.var.ssl_client_verify)
+        }
+    }
+--- stream_server_config
+    proxy_pass                  unix:$TEST_NGINX_HTML_DIR/nginx.sock;
+    proxy_ssl                   on;
+    proxy_ssl_certificate       ../../cert/test.crt;
+    proxy_ssl_certificate_key   ../../cert/test.key;
+    proxy_ssl_session_reuse     off;
+
+--- stream_response
+SUCCESS
+
+--- error_log
+client certificate subject: emailAddress=agentzh@gmail.com,CN=test.com
+
+--- no_error_log
+[error]
+[alert]
+[emerg]
+
+
+
+=== TEST 24: verify client without CA certificates
+--- stream_config
+    server {
+        listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
+
+        ssl_certificate ../../cert/test2.crt;
+        ssl_certificate_key ../../cert/test2.key;
+
+        ssl_certificate_by_lua_block {
+            local ssl = require "ngx.ssl"
+
+            local ok, err = ssl.verify_client()
+            if not ok then
+                ngx.log(ngx.ERR, "failed to verify client: ", err)
+                return
+            end
+        }
+
+        content_by_lua_block {
+            print('client certificate subject: ', ngx.var.ssl_client_s_dn)
+            ngx.say(ngx.var.ssl_client_verify)
+        }
+    }
+--- stream_server_config
+    proxy_pass                  unix:$TEST_NGINX_HTML_DIR/nginx.sock;
+    proxy_ssl                   on;
+    proxy_ssl_certificate       ../../cert/test.crt;
+    proxy_ssl_certificate_key   ../../cert/test.key;
+    proxy_ssl_session_reuse     off;
+
+--- stream_response
+FAILED:self signed certificate
+
+--- error_log
+client certificate subject: emailAddress=agentzh@gmail.com,CN=test.com
+
+--- no_error_log
+[error]
+[alert]
+[emerg]
+
+
+
+=== TEST 25: verify client but client provides no certificate
+--- stream_config
+    server {
+        listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
+
+        ssl_certificate ../../cert/test2.crt;
+        ssl_certificate_key ../../cert/test2.key;
+
+        ssl_certificate_by_lua_block {
+            local ssl = require "ngx.ssl"
+
+            local f = assert(io.open("t/cert/test.crt", "rb"))
+            local cert_data = f:read("*all")
+            f:close()
+
+            local cert = ssl.parse_pem_cert(cert_data)
+            if not cert then
+                ngx.log(ngx.ERR, "failed to parse pem cert: ", err)
+                return
+            end
+
+            local ok, err = ssl.verify_client(cert, 1)
+            if not ok then
+                ngx.log(ngx.ERR, "failed to verify client: ", err)
+                return
+            end
+        }
+
+        content_by_lua_block {
+            print('client certificate subject: ', ngx.var.ssl_client_s_dn)
+            ngx.say(ngx.var.ssl_client_verify)
+        }
+    }
+--- stream_server_config
+    proxy_pass                  unix:$TEST_NGINX_HTML_DIR/nginx.sock;
+    proxy_ssl                   on;
+    proxy_ssl_session_reuse     off;
+
+--- stream_response
+NONE
+
+--- error_log
+client certificate subject: nil
+
 --- no_error_log
 [error]
 [alert]
